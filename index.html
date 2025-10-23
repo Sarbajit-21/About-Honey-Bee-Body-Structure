@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Honey Bee Anatomy & Morphology Explorer</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --accent-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      --honey-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      --bee-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --text-primary: #2d3748;
+      --text-secondary: #718096;
+      --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.15);
+      --border-radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+      margin: 0;
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--honey-gradient);
+      color: var(--text-primary);
+      padding: 32px 24px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 2.5rem;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23ffffff20"/><circle cx="80" cy="40" r="1.5" fill="%23ffffff30"/><circle cx="40" cy="80" r="1" fill="%23ffffff25"/></svg>');
+      animation: float 20s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .tab-btn {
+      background: var(--panel-bg);
+      border: none;
+      padding: 16px 32px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      color: var(--text-primary);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-gradient);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      color: white;
+    }
+
+    .tab-btn:hover::before {
+      left: 0;
+    }
+
+    .tab-btn.active {
+      background: var(--primary-gradient);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .tab-btn.active::before {
+      left: 0;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 16px;
+    }
+
+    .lead {
+      color: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 0 auto 32px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 300;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .image-section {
+      position: relative;
+      text-align: center;
+      background: var(--panel-bg);
+      border-radius: var(--border-radius);
+      padding: 32px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(10px);
+      margin-bottom: 32px;
+    }
+
+    .image-section img {
+      max-width: 95%;
+      height: auto;
+      border-radius: var(--border-radius);
+      border: 3px solid transparent;
+      background: var(--primary-gradient);
+      background-clip: padding-box;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.3s ease;
+    }
+
+    .image-section img:hover {
+      transform: scale(1.02);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .tooltip {
+      position: absolute;
+      display: none;
+      background: var(--panel-bg);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 280px;
+      box-shadow: var(--shadow-soft);
+      z-index: 40;
+      font-weight: 600;
+      color: var(--text-primary);
+      backdrop-filter: blur(10px);
+      animation: tooltipFade 0.3s ease;
+    }
+
+    @keyframes tooltipFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .desc-panel {
+      margin-top: 32px;
+      background: var(--panel-bg);
+      padding: 32px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-soft);
+      display: none;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .desc-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary-gradient);
+    }
+
+    .desc-panel.visible {
+      display: block;
+      animation: panelSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes panelSlide {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .desc-panel h3 {
+      margin: 0 0 16px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .desc-panel .meta {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    .desc-panel .close-btn {
+      background: var(--secondary-gradient);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      float: right;
+      color: white;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .desc-panel .close-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .quiz {
+      margin-top: 32px;
+      background: var(--panel-bg);
+      padding: 32px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .quiz p {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .quiz button {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent-gradient);
+      cursor: pointer;
+      margin: 8px 12px 0 0;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quiz button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: left 0.3s ease;
+    }
+
+    .quiz button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .quiz button:hover::before {
+      left: 0;
+    }
+
+    #quiz-result {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 20px;
+      text-align: center;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+    }
+
+    footer {
+      text-align: center;
+      padding: 32px 24px;
+      margin: 48px 0 0;
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      font-weight: 600;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .tab-content {
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        font-size: 1.8rem;
+        padding: 24px 16px;
+      }
+
+      nav {
+        padding: 16px;
+      }
+
+      .tab-btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+      }
+
+      main {
+        padding: 0 16px;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .image-section, .desc-panel, .quiz {
+        padding: 20px;
+      }
+
+      .tooltip {
+        max-width: 200px;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary-gradient);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-gradient);
+    }
+
+    /* Area hover effect */
+    area:hover {
+      cursor: pointer;
+    }
+
+    /* Loading animation for images */
+    img {
+      transition: opacity 0.3s ease;
+    }
+
+    img[src=""] {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>🐝 Honey Bee — Anatomy & Morphology Explorer</header>
+
+  <nav>
+    <button class="tab-btn active" onclick="showTab(event,'morphology')">Morphology</button>
+    <button class="tab-btn" onclick="showTab(event,'anatomy')">Anatomy</button>
+    <button class="tab-btn" onclick="showTab(event,'quiz')">Quiz</button>
+  </nav>
+
+  <main>
+    <!-- MORPHOLOGY TAB -->
+    <section id="morphology" class="tab-content" style="display:block">
+      <h2>External Morphology</h2>
+      <p class="lead">Click any region on the image to see a quick tooltip, and read the full, detailed description below the image.</p>
+
+      <div class="image-section">
+        <img src="Honey Bee M.jpeg" usemap="#morph-map" alt="Honey Bee Morphology" id="morphImg">
+        <map name="morph-map">
+          <area alt="Compound Eye" title="Compound Eye" coords="481,324,530,370,557,402,549,418,521,418,490,403,467,378,460,351,463,335" shape="poly" onclick="showPart(event,'Compound Eye')">
+          <area alt="Wings" title="Wings" coords="403,163,417,144,437,139,461,146,482,132,521,127,541,124,570,129,587,137,595,151,587,165,577,184,553,213,535,239,503,259,485,249,461,235,439,221,425,209,411,188" shape="poly" onclick="showPart(event,'Wings')">
+          <area alt="Antennae" title="Antennae" coords="573,333,574,323,574,302,607,325,636,350,642,363,624,348,586,318,582,329" shape="poly" onclick="showPart(event,'Antennae')">
+          <area alt="Front Legs" title="Front Legs" coords="420,361,457,352,466,377,446,395,445,411,454,421,433,431,438,457,432,477,427,496,435,516,432,545,442,571,448,601,435,610,425,572,425,549,412,528,411,508,416,491,402,483,401,464,415,419,418,400,431,397" shape="poly" onclick="showPart(event,'Fore Legs')">
+          <area alt="Middle Legs" title="Middle Legs" coords="318,338,303,375,295,384,296,402,292,439,281,469,271,490,236,513,223,504,261,479,270,395,287,379,275,367,287,328,300,310,312,295,320,285,328,284,335,305,337,327,338,349,338,371,358,381,329,393,316,375,314,359" shape="poly" onclick="showPart(event,'Middle Legs')">
+          <area alt="Hind Legs" title="Hind Legs" coords="201,333,187,368,171,395,158,415,138,442,114,468,82,483,40,477,78,474,91,445,128,402,141,404,142,392,140,375,153,354,177,344,196,324,211,324,236,332,253,340,278,353,278,372,251,359,219,340" shape="poly" onclick="showPart(event,'Hind Legs')">
+          <area alt="Ocelli" title="Ocelli" coords="515,301,24" shape="circle" onclick="showPart(event,'Ocelli')">
+          <area alt="Jaw" title="Jaw" coords="575,409,602,371,607,409,602,419,596,423,577,425" shape="poly" onclick="showPart(event,'Jaw')">
+          <area alt="Head" title="Head" coords="479,320,508,346,529,367,548,387,561,405,557,370,540,357,552,359,548,341,559,332,569,316,548,293,532,325,513,327" shape="poly" onclick="showPart(event,'Head')">
+          <area alt="Thorax" title="Thorax" coords="424,381,406,383,380,375,359,353,351,331,350,309,347,291,372,302,399,321,407,309,403,287,378,278,361,263,373,251,382,245,399,242,416,234,440,234,453,236,483,246,497,261,501,278,480,305,465,323,457,351,419,361" shape="poly" onclick="showPart(event,'Thorax')">
+          <area alt="Abdomen" title="Abdomen" coords="287,329,258,325,213,322,189,315,188,303,175,295,162,284,158,263,163,247,168,231,176,218,196,224,227,236,243,243,264,252,282,260,299,267,309,270,324,277,308,301" shape="poly" onclick="showPart(event,'Abdomen')">
+          <area alt="Sting" title="Sting" coords="188,308,167,308,164,286,181,297" shape="poly" onclick="showPart(event,'Sting')">
+          <area alt="Spiracle" title="Spiracle" coords="230,300,250,310,245,320,225,315" shape="poly" onclick="showPart(event,'Spiracle')">
+        </map>
+        <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
+      </div>
+
+      <div id="detail" class="desc-panel" aria-hidden="true">
+        <button class="close-btn" onclick="hideDetail()">Close</button>
+        <h3 id="detail-title">Part name</h3>
+        <div class="meta" id="detail-meta">Quick summary</div>
+        <div id="detail-body"></div>
+      </div>
+    </section>
+
+    <!-- ANATOMY TAB -->
+    <section id="anatomy" class="tab-content">
+      <h2>Internal Anatomy</h2>
+      <p class="lead">Click on any body part to view its description below.</p>
+      <div class="image-section">
+        <img src="Honey Bee A.png" usemap="#image-map" alt="Honey Bee Anatomy">
+        <map name="image-map">
+          <area shape="poly" coords="142,750,167,750,167,822,146,808" alt="Maxilla" onclick="showAnatomyDetail('Maxilla')">
+          <area shape="circle" coords="162,703,24" alt="Labrum" onclick="showAnatomyDetail('Labrum')">
+          <area shape="circle" coords="128,664,25" alt="Hypopharyngeal gland" onclick="showAnatomyDetail('Hypopharyngeal gland')">
+          <area shape="rect" coords="87,606,107,627" alt="Mandible" onclick="showAnatomyDetail('Mandible')">
+          <area shape="circle" coords="114,607,9" alt="Salivary gland" onclick="showAnatomyDetail('Salivary gland')">
+          <area shape="rect" coords="130,589,149,622" alt="Pharynx" onclick="showAnatomyDetail('Pharynx')">
+          <area shape="circle" coords="104,544,14" alt="Esophagus" onclick="showAnatomyDetail('Esophagus')">
+          <area shape="poly" coords="111,513,135,509,148,500,142,480,151,471,162,459,178,451,196,451,180,432,160,427,124,436,100,451,86,483,79,501,92,526" alt="Brain" onclick="showAnatomyDetail('Brain')">
+          <area shape="circle" coords="167,487,24" alt="Ocellus" onclick="showAnatomyDetail('Ocellus')">
+          <area shape="poly" coords="258,484,296,456,307,478,335,513,308,517,282,516,264,512" alt="Thoracic air sac" onclick="showAnatomyDetail('Thoracic air sac')">
+          <area shape="poly" coords="234,465,255,498,256,479,290,455,311,477,335,511,339,522,368,525,367,507,419,510,456,523,443,454,394,407,351,390,316,390,272,409,250,425" alt="Dorsal vessel" onclick="showAnatomyDetail('Dorsal vessel')">
+          <area shape="circle" coords="670,443,19" alt="Abdominal air sacs" onclick="showAnatomyDetail('Abdominal air sacs')">
+          <area shape="circle" coords="708,450,8" alt="Trachea" onclick="showAnatomyDetail('Trachea')">
+          <area shape="poly" coords="511,545,523,550,555,512,575,501,594,501,610,513,622,522,646,522,666,528,687,553,700,569,706,578,724,589,742,586,758,576,767,568,768,550,766,540,756,522,731,512,710,492,699,480,682,464,655,458,634,446,620,444,603,438,584,438,566,437,547,448,536,480,535,525" alt="Ventral diaphragm" onclick="showAnatomyDetail('Ventral diaphragm')">
+          <area shape="poly" coords="626,536,647,527,667,536,679,545,687,556,710,585,741,595,754,584,767,573,782,581,800,602,808,616,807,628,794,641,763,652,735,658,703,652,683,641,659,620,643,601,622,561,635,559,651,583,667,591,658,556" alt="Ventral nerve cord" onclick="showAnatomyDetail('Ventral nerve cord')">
+          <area shape="circle" coords="738,488,8" alt="Sting apparatus" onclick="showAnatomyDetail('Sting apparatus')">
+          <area shape="circle" coords="803,583,18" alt="Rectum" onclick="showAnatomyDetail('Rectum')">
+          <area shape="circle" coords="835,649,15" alt="Poison gland" onclick="showAnatomyDetail('Poison gland')">
+          <area shape="poly" coords="792,698,823,686,823,705,799,710" alt="Ovary" onclick="showAnatomyDetail('Ovary')">
+          <area shape="poly" coords="803,720,819,718,818,738,803,736" alt="Spermatheca" onclick="showAnatomyDetail('Spermatheca')">
+          <area shape="rect" coords="770,719,798,750" alt="Vagina" onclick="showAnatomyDetail('Vagina')">
+          <area shape="rect" coords="741,709,768,734" alt="Malpighian tubules" onclick="showAnatomyDetail('Malpighian tubules')">
+          <area shape="circle" coords="725,678,10" alt="Ileum" onclick="showAnatomyDetail('Ileum')">
+          <area shape="circle" coords="710,698,11" alt="Honey stomach" onclick="showAnatomyDetail('Honey stomach')">
+          <area shape="circle" coords="596,625,13" alt="Proventriculus" onclick="showAnatomyDetail('Proventriculus')">
+          <area shape="poly" coords="616,548,632,548,644,559,652,582,663,582,654,559,648,542,619,535" alt="Ventriculus" onclick="showAnatomyDetail('Ventriculus')">
+          <area shape="poly" coords="533,549,553,525,580,505,592,511,606,524,605,535,580,541,583,550,589,554,603,553,592,572,576,585,555,587,529,578,519,574" alt="Thoracic ganglion" onclick="showAnatomyDetail('Thoracic ganglion')">
+          <area shape="rect" coords="455,545,506,526" alt="Salivary gland" onclick="showAnatomyDetail('Salivary gland')">
+          <area shape="circle" coords="408,549,9" alt="Crop" onclick="showAnatomyDetail('Crop')">
+          <area shape="poly" coords="356,563,375,559,390,555,412,565,398,572,370,572,332,576,323,568" alt="Ventriculus" onclick="showAnatomyDetail('Ventriculus')">
+          <area shape="poly" coords="172,795,168,827,189,863,207,863" alt="Labium" onclick="showAnatomyDetail('Labium')">
+        </map>
+      </div>
+
+      <div id="anatomy-detail" class="desc-panel" aria-hidden="true">
+        <button class="close-btn" onclick="hideAnatomyDetail()">Close</button>
+        <h3 id="anatomy-title">Part name</h3>
+        <div id="anatomy-body"></div>
+      </div>
+    </section>
+
+    <!-- QUIZ TAB -->
+    <section id="quiz" class="tab-content">
+      <h2>Quick Quiz</h2>
+      <div class="quiz">
+        <p><strong>Q1.</strong> Which part contains the flight muscles?</p>
+        <button onclick="checkAnswer(this,true)">Thorax</button>
+        <button onclick="checkAnswer(this,false)">Abdomen</button>
+
+        <p><strong>Q2.</strong> Which legs have the pollen baskets (corbiculae)?</p>
+        <button onclick="checkAnswer(this,true)">Hind legs</button>
+        <button onclick="checkAnswer(this,false)">Front legs</button>
+
+        <p><strong>Q3.</strong> Which type of honey bee is responsible for producing royal jelly?</p>
+        <button onclick="checkAnswer(this,true)">Drone</button>
+        <button onclick="checkAnswer(this,false)">Worker bee</button>
+
+        <p><strong>Q4.</strong> What is the main purpose of the drone bee in a honey bee colony?</p>
+        <button onclick="checkAnswer(this,true)">Protect the hive</button>
+        <button onclick="checkAnswer(this,false)">Mate with the queen</button>
+
+        <p><strong>Q5.</strong> What is the typical lifespan of a worker bee during the summer season?</p>
+        <button onclick="checkAnswer(this,true)">6 weeks</button>
+        <button onclick="checkAnswer(this,false)">1 year</button>
+
+        <p><strong>Q6.</strong> What substance do honey bees collect from flowers to produce honey?</p>
+        <button onclick="checkAnswer(this,true)">Nectar</button>
+        <button onclick="checkAnswer(this,false)">Propolis</button>
+
+        <p><strong>Q7.</strong> The process by which bees communicate the location of food sources to other bees is called?</p>
+        <button onclick="checkAnswer(this,true)">Waggle dance</button>
+        <button onclick="checkAnswer(this,false)">Pollen signaling</button>
+
+        <p><strong>Q8.</strong> Which gland in worker bees produces beeswax?</p>
+        <button onclick="checkAnswer(this,true)">Wax glands</button>
+        <button onclick="checkAnswer(this,false)">Hypopharyngeal glands</button>
+
+        <p><strong>Q9.</strong> How many pairs of wings does a honey bee have?</p>
+        <button onclick="checkAnswer(this,true)">Two</button>
+        <button onclick="checkAnswer(this,false)">Three</button>
+
+        <p><strong>Q10.</strong> What is the average temperature maintained inside a bee hive for brood development?</p>
+        <button onclick="checkAnswer(this,true)">34°C to 35°C</button>
+        <button onclick="checkAnswer(this,false)">40°C</button>
+
+        <p id="quiz-result"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© 2025 Honey Bee Learning App — Interactive Anatomy & Morphology</footer>
+
+  <script>
+    // Tab navigation
+    function showTab(ev, id){
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      ev.currentTarget.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(s=>s.style.display='none');
+      document.getElementById(id).style.display='block';
+      hideDetail();
+      hideAnatomyDetail();
+    }
+
+    // Morphology descriptions
+    const DESCRIPTIONS = {
+      "Head": {
+      title:'Head', 
+      meta:'Sensory and feeding center', 
+      html:'<p>The head of a honey bee serves as the primary sensory and feeding center, housing sophisticated neural processing capabilities within a compact chitinous capsule.This region contains the bee brain, which processes information from multiple sensory organs to coordinate flight, navigation, and social behaviors. The head structure is specially adapted to accommodate powerful mandibular muscles for various tasks from feeding to wax manipulation. It also supports the proboscis, a complex tubular feeding structure that can extend and retract for nectar collection. The head shape and orientation allow for optimal visual field coverage while maintaining aerodynamic efficiency during flight.</p>'
+    },
+      "Compound Eye": {
+      title:'Compound Eye',
+      meta:'Vision & navigation',
+      html:'<p>The compound eyes are remarkable biological structures consisting of thousands of individual optical units called ommatidia, each functioning as a separate light-detecting element that contributes to a mosaic-like image. These eyes provide honey bees with exceptional motion detection capabilities, allowing them to track movements and navigate through complex three-dimensional environments with extraordinary precision. The compound eyes are particularly sensitive to ultraviolet light, enabling bees to see patterns on flowers that are completely invisible to human vision, such as nectar guides that direct them to pollen and nectar sources. The positioning of these large eyes on either side of the head provides nearly 360-degree visual coverage, crucial for avoiding predators and obstacles during flight. Worker bees possess approximately 5,500 ommatidia per eye, while drones have even more to aid in their primary function of locating queens during mating flights.</p>'
+    },
+      "Ocelli": {
+      title:'Ocelli',
+      meta:'Light sensors',
+      html:'<p>Ocelli are three simple eyes arranged in a triangular pattern on the top of the bee head, functioning as light intensity sensors rather than image-forming organs like the compound eyes. These photoreceptive organs play a crucial role in flight stabilization by detecting changes in light levels and helping the bee maintain proper orientation relative to the horizon and sun position. The ocelli work in conjunction with the compound eyes to provide rapid responses to sudden changes in ambient light, which is essential for quick aerial maneuvers. Research suggests these simple eyes also contribute to the bee circadian rhythm regulation and help synchronize their internal biological clock with external day-night cycles. The neural pathways from the ocelli connect directly to flight control centers in the brain, enabling instantaneous corrections to flight posture.</p>'
+    },
+      "Antennae": {
+      title:'Antennae',
+      meta:'Olfaction & touch',
+      html:'<p>The antennae are extraordinarily sophisticated sensory appendages covered with thousands of chemoreceptors, mechanoreceptors, and thermoreceptors that allow bees to perceive their environment through touch, smell, taste, and even detect minute air currents. Each antenna consists of a scape (base segment), pedicel (second segment), and a flagellum composed of multiple segments that contain specialized sensory structures called sensilla. These organs are essential for chemical communication within the hive, enabling bees to detect and interpret pheromones that coordinate colony activities, from queen recognition to alarm responses. The antennae can detect carbon dioxide concentrations, helping bees locate flowers through their respiration signature, and they are sensitive enough to measure humidity levels and air movement patterns. During the famous waggle dance, bees use their antennae to follow the dancing bee movements in the dark hive, translating mechanical vibrations into spatial information about food source locations.</p>'
+    },
+      "Jaw": {
+      title:'Jaw',
+      meta:'Manipulation & grooming',
+      html:'<p>The mandibles are powerful, hardened mouthparts that serve multiple essential functions beyond simple feeding, acting as versatile tools for construction, defense, and social behaviors within the colony. These jaw-like structures are used by worker bees to manipulate and shape beeswax during comb construction, demonstrating remarkable precision in creating the hexagonal cells that characterize honeycomb architecture. The mandibles also function as grooming tools, allowing bees to clean their antennae and other body parts, remove debris from the hive, and assist nestmates in maintaining colony hygiene. During defensive behaviors, bees use their mandibles to bite intruders, and they are essential for removing dead bees or debris from the hive entrance. Additionally, mandibular glands associated with these structures produce various pheromones, including the queen mandibular pheromone (QMP) in queen bees, which suppresses worker ovary development and maintains social cohesion.</p>'
+    },
+      "Thorax": {
+      title:'Thorax',
+      meta:'Flight & locomotion',
+      html:'<p>The thorax is the powerhouse of the bee body, a robust middle segment packed with massive flight muscles that can contract up to 230 times per second to power the wings and generate the characteristic buzzing sound. This region consists of three fused segments (prothorax, mesothorax, and metathorax), each bearing a pair of legs, while the meso- and metathorax also support the two pairs of wings. The indirect flight muscles within the thorax do not attach directly to the wings but instead deform the thoracic cuticle, causing rapid wing beats through a click mechanism that allows for highly efficient energy use. The thorax also houses the honey crop entrance and contains vital ganglia that coordinate leg and wing movements with split-second precision. Temperature regulation is critical in the thorax, as flight muscles generate substantial heat; bees can actively thermoregulate by decoupling wing movement from muscle contraction, essentially shivering to warm the hive or themselves.</p>'
+    },
+      "Fore Legs": {
+      title:'Fore Legs',
+      meta:'Cleaning',
+      html:'<p>The fore legs are specialized appendages equipped with unique grooming structures, most notably the antenna cleaner, a semicircular notch with a comb-like structure on the first tarsal segment that allows bees to meticulously clean their antennae. This cleaning mechanism is essential because antennae are the bee primary chemical sensors, and any contamination with pollen, dust, or propolis could impair their ability to communicate and navigate effectively. The fore legs also feature brushes of setae (hair-like structures) that help collect pollen from the head and anterior parts of the body during the grooming process. These legs are the most mobile and dexterous of the three pairs, capable of reaching most parts of the bee head and body for maintenance activities. During flower visitation, the fore legs make first contact with the blossom, and their sensory receptors help the bee assess the quality and quantity of available nectar and pollen.</p>'
+    },
+      "Middle Legs": {
+      title:'Middle Legs',
+      meta:'Walking & pollen transfer',
+      html:'<p>The middle legs serve as transitional limbs that bridge the functions of the fore and hind legs, playing crucial roles in locomotion, grooming, and pollen manipulation during foraging activities. These legs are equipped with a tibial spur, a sharp, movable spine that bees use to pry pollen loads from the pollen baskets on their hind legs when returning to the hive, essentially acting as a lever to remove the collected pollen. The middle legs also assist in transferring pollen from the front of the body to the hind legs during the complex grooming and packing sequence that foragers perform while moving between flowers. Their position provides optimal leverage for various hive activities, including walking on comb surfaces, maintaining balance during construction work, and supporting the bee weight during rest. The middle legs joints and musculature are designed to provide stability during the rapid leg movements required for the bee walking gait pattern.</p>'
+    },
+      "Hind Legs": {
+      title:'Hind Legs',
+      meta:'Pollen transport',
+      html:'<p>The hind legs are remarkably specialized structures featuring the corbicula or pollen basket, a smooth, slightly concave area on the outer surface of the tibia surrounded by long, curved hairs that function to hold and transport large quantities of pollen back to the hive. Worker bees possess a sophisticated pollen press mechanism formed by the tibia and basitarsus that compresses moistened pollen into compact pellets, which are then transferred to the pollen baskets through a series of precise leg movements. The hind legs also feature the pollen comb, rows of stiff bristles on the inner surface of the basitarsus that scrape pollen from the body and opposite leg during grooming. These legs are essential for propolis collection, as bees use them to carry sticky plant resins that they gather with their mandibles. The hind legs length and positioning make them ideal for stabilization during various hive activities, and their powerful musculature enables bees to perform the ventilation fanning behavior that regulates hive temperature and humidity.</p>'
+    },
+      "Wings": {
+      title:'Wings',
+      meta:'Flight',
+      html:'<p>Honey bee wings are marvels of biological engineering, consisting of thin, transparent membranes supported by a network of veins (made of hardened cuticle) that provide structural integrity while maintaining remarkable flexibility and lightness. The two pairs of wings can interlock during flight through a series of tiny hooks called hamuli on the hindwing that catch onto a fold on the forewing, effectively creating a single airfoil surface that increases lift and flight efficiency. The wing venation pattern is not only structurally important but also taxonomically significant, as the arrangement of veins is used by scientists to identify different bee species and subspecies. During flight, bees can beat their wings at frequencies exceeding 200 beats per second, generating enough lift to carry their body weight plus additional cargo of nectar and pollen that may equal or exceed their body mass. Wings also serve non-flight functions, including fanning behavior for hive ventilation and temperature regulation, and they can be used to produce specific vibrations during communication, such as the piping sounds made by virgin queens.</p>'
+    },
+      "Abdomen": {
+      title:'Abdomen',
+      meta:'Visceral organs',
+      html:'<p>The abdomen is a segmented, flexible structure that houses most of the bee vital organs, including the digestive system, reproductive organs, wax glands, and venom apparatus, making it essential for both individual survival and colony function. This posterior body region consists of visible tergites (dorsal plates) and sternites (ventral plates) connected by flexible intersegmental membranes that allow for expansion when consuming nectar or honey and contraction during respiration and sting extension. The abdomen contains the honey stomach or crop, a specialized expandable storage organ that allows foragers to carry nectar without digesting it, keeping it separate from their own digestive tract through a valve mechanism. Worker bees possess four pairs of wax glands on the ventral surface of abdominal segments that secrete liquid wax, which hardens into scales that can be manipulated with the mandibles and legs to construct comb. The abdomen telescoping capability enables bees to extend their sting apparatus, and its distinctive banding pattern (varying between species) provides visual signals for recognition and serves as warning coloration to potential predators.</p>'
+    },
+      "Sting": {
+      title:'Sting',
+      meta:'Defense',
+      html:'<p>The sting apparatus is a highly modified ovipositor (egg-laying organ) found in female bees that has evolved into a sophisticated defensive weapon consisting of a sharp, barbed stylet, venom sac, and associated musculature that can continue injecting venom even after detaching from the bee body. The sting shaft features backward-facing barbs that anchor it in mammalian skin, causing the entire venom apparatus to tear away from the bee abdomen when she attempts to fly away, resulting in the bee death but ensuring maximum venom delivery to the target. The venom itself is a complex cocktail of enzymes, peptides (including melittin and apamin), and histamine-releasing compounds that cause immediate pain, followed by inflammation and immune responses in victims. Worker bees can sting other insects and arthropods without losing their stingers because the barbs do not catch on the hard exoskeleton, allowing for repeated defensive actions against these threats. The sting apparatus also plays a role in pheromone production, as alarm pheromones are released during stinging events, chemically alerting nearby bees to potential threats and coordinating collective defensive responses that can involve hundreds or thousands of defenders.</p>'
+    },
+    
+        };
+
+    function showPart(ev,key){
+      ev.preventDefault();
+      const tip=document.getElementById('tooltip');
+      tip.textContent = DESCRIPTIONS[key]?.title||key;
+      tip.style.display='block';
+      tip.style.left=(ev.pageX+12)+'px';
+      tip.style.top=(ev.pageY+8)+'px';
+      const d=DESCRIPTIONS[key];
+      if(d){
+        document.getElementById('detail-title').textContent=d.title;
+        document.getElementById('detail-meta').textContent=d.meta;
+        document.getElementById('detail-body').innerHTML=d.html;
+        const panel=document.getElementById('detail');
+        panel.classList.add('visible');
+        panel.setAttribute('aria-hidden','false');
+        if(window.innerWidth<700) panel.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+      clearTimeout(window._tipTimeout);
+      window._tipTimeout=setTimeout(()=>{ tip.style.display='none'; },2000);
+    }
+
+    function hideDetail(){
+      document.getElementById('detail').classList.remove('visible');
+      document.getElementById('detail').setAttribute('aria-hidden','true');
+      document.getElementById('tooltip').style.display='none';
+    }
+
+    // Anatomy descriptions
+    const anatomyDescriptions = {
+      "Maxilla": {
+      title: 'Maxilla', 
+      meta: 'Secondary mouthpart manipulator', 
+      html: '<p>The maxillae are a pair of sophisticated mouthparts located lateral to the mandibles that serve as essential components of the honey bee\'s feeding apparatus, working in coordination with the labium to form the proboscis used for liquid feeding. Each maxilla consists of several articulated segments including the cardo (basal hinge), stipes (support structure), galea (blade-like lobe), and maxillary palps (sensory appendages), all working together to manipulate food and create sealed feeding channels. The elongated galea portions of the maxillae form the lateral walls of the food canal when the bee extends its proboscis, enclosing the central glossa (tongue) and creating a functional tube through which nectar can be drawn by capillary action and muscular pumping. The maxillae are equipped with numerous chemosensory and mechanosensory receptors, particularly on the maxillary palps, allowing bees to taste and assess food quality, detect appropriate nectar concentrations, and make foraging decisions based on resource profitability. During feeding, the maxillae work dynamically, adjusting their position to maintain seal integrity while the glossa laps up nectar, and they can fold back compactly against the head when not in use, demonstrating the remarkable morphological flexibility that allows bees to switch between different feeding modes and perform various hive tasks beyond nectar collection.</p>'
+    },
+      "Labrum": {
+      title: 'Labrum', 
+      meta: 'Upper lip and protective cover', 
+      html: '<p>The labrum is a broad, movable flap that functions as the upper lip of the honey bee, providing essential protection for the more delicate mouthparts located beneath it, including the mandibles and proboscis components. This chitinous plate acts as a protective shield during feeding activities, preventing debris and foreign particles from entering the mouth while the bee manipulates food sources. The labrum works in coordination with other mouthparts to create a sealed feeding channel when the bee extends its proboscis into flowers, ensuring efficient nectar uptake without spillage. Its inner surface contains sensory receptors that help the bee assess food quality and texture before ingestion. The labrum\'s flexibility allows it to fold back during mandible use for tasks like wax manipulation and hive construction, demonstrating the remarkable versatility of bee mouthpart adaptations.</p>'
+    },
+
+      "Hypopharyngeal gland": {
+      title: 'Hypopharyngeal Gland', 
+      meta: 'Royal jelly production center', 
+      html: '<p>The hypopharyngeal glands are paired secretory organs located in the head of worker bees that undergo remarkable age-related functional changes, producing different substances depending on the bee\'s role within the colony. In young nurse bees (approximately 6-12 days old), these glands are highly active and produce royal jelly, a protein-rich, milky-white secretion that serves as the exclusive food for the queen throughout her life and for all larvae during their first three days of development. Royal jelly contains a complex mixture of proteins, vitamins, fatty acids, and the crucial compound royalactin, which triggers the developmental pathway that transforms a female larva into a queen rather than a worker. As worker bees age and transition to foraging duties, the hypopharyngeal glands atrophy and shift function to produce enzymes, particularly invertase and glucose oxidase, which are mixed with nectar to begin the honey-making process. The health and productivity of these glands directly impact colony nutrition, brood rearing success, and overall hive vitality, making them essential to the colony\'s reproductive success and survival.</p>'
+    },
+
+      "Mandible": {
+      title: 'Mandible', 
+      meta: 'Multi-purpose jaw tool', 
+      html: '<p>The mandibles are powerful, sclerotized (hardened) mouthparts that function as the honey bee\'s primary tools for mechanical manipulation, serving diverse roles that extend far beyond simple feeding to encompass construction, defense, grooming, and social maintenance activities. These jaw-like structures are controlled by strong adductor and abductor muscles that provide exceptional gripping force, allowing worker bees to precisely shape and mold beeswax into the perfect hexagonal cells that comprise the honeycomb architecture, a task requiring both strength and remarkable precision. During foraging, mandibles help bees harvest pollen by scraping anthers and manipulate propolis (plant resins) by chewing and mixing it with salivary secretions before transport. The mandibles serve critical hygienic functions, including removing dead bees, diseased larvae, and debris from the hive, as well as grooming behaviors where bees clean themselves and nestmates to maintain colony health. In defensive situations, guard bees use their mandibles to bite intruders, and the associated mandibular glands produce alarm pheromones and, in queens, the queen mandibular pheromone (QMP) that regulates worker behavior and suppresses ovary development, demonstrating the mandibles\' integral role in both physical tasks and chemical communication.</p>'
+    },
+
+      "Salivary gland": {
+      title: 'Salivary Gland', 
+      meta: 'Digestive enzyme producer', 
+      html: '<p>The salivary glands are paired secretory structures located in the head and thorax of honey bees that produce enzyme-rich secretions essential for food processing, digestion, and various hive-related chemical modifications. These glands secrete a watery fluid containing enzymes such as amylase and invertase, which begin breaking down complex carbohydrates even before food enters the digestive tract, facilitating more efficient nutrient extraction. The salivary secretions serve as a lubricant for food manipulation, moistening dry pollen grains to make them easier to consume and helping to form the pollen-nectar mixture that bees pack into cells as bee bread for larval consumption. During the honey-making process, salivary enzymes mix with regurgitated nectar to catalyze the conversion of complex sugars into simpler forms, contributing to honey\'s long-term preservation properties and distinctive composition. The glands also produce secretions used in wax manipulation, as bees moisten wax scales to make them pliable enough for construction work. Additionally, these glands play a role in larval care, as nurse bees use salivary secretions when preparing and delivering food to developing brood, ensuring proper nutrition and facilitating the digestive process in immature bees.</p>'
+    },
+
+      "Pharynx": {
+      title: 'Pharynx', 
+      meta: 'Swallowing and food transport hub', 
+      html: '<p>The pharynx is a muscular chamber located at the back of the mouth cavity that serves as a critical junction point where food and liquid are received from the mouthparts and directed toward the esophagus for further processing. This structure functions as an active pumping mechanism, using rhythmic muscular contractions to move nectar, pollen, water, and other consumed materials from the oral cavity into the digestive tract with remarkable efficiency. The pharyngeal walls are equipped with muscles that generate suction pressure, which is particularly important when bees draw nectar through their proboscis from deep within flowers, essentially functioning as a biological pump that can work against gravity and surface tension. The pharynx also contains sensory receptors that allow bees to taste and assess food quality before committing to full ingestion, providing a final checkpoint for contaminated or unsuitable food sources. During regurgitation behaviors, such as trophallaxis (food sharing between colony members) or honey deposition into comb cells, the pharynx works in reverse, helping to move stored crop contents back up through the mouth for distribution or storage, demonstrating its bidirectional functionality essential to social food exchange and honey production.</p>'
+    },
+
+      "Esophagus": {
+      title: 'Esophagus', 
+      meta: 'Food transport conduit', 
+      html: '<p>The esophagus is a narrow, tubular passage that extends from the pharynx in the head through the thorax and into the anterior portion of the abdomen, serving as the primary conduit for transporting ingested food, nectar, and water to the honey stomach (crop). This muscular tube utilizes peristaltic contractions—wave-like movements of circular and longitudinal muscles—to propel food materials efficiently through the bee\'s body, overcoming gravitational and spatial challenges during flight and various body orientations. The esophageal walls are lined with a thin cuticle that protects the tissue while maintaining flexibility necessary for the passage of both liquid nectar and more solid pollen masses that bees consume. The esophagus passes through the thorax\'s narrow space between flight muscles and other vital organs, representing an elegant anatomical solution to connecting the feeding apparatus with the digestive and storage systems. During nectar foraging, the esophagus must transport large volumes of liquid quickly and efficiently, as foragers may fill their honey stomach to capacity with nectar that approaches or exceeds their own body weight. The esophagus also functions during trophallaxis and food regurgitation, working bidirectionally to allow bees to share food with nestmates and deposit processed nectar into storage cells, making it essential for both individual nutrition and colony-level food distribution networks.</p>'
+    },
+
+      "Brain": {
+      title: 'Brain', 
+      meta: 'Central processing and control unit', 
+      html: '<p>The honey bee brain, despite its remarkably small size of approximately one cubic millimeter and containing roughly 960,000 neurons, demonstrates extraordinary computational capabilities that enable complex behaviors including navigation, learning, memory formation, sensory integration, and sophisticated social communication. This compact neural structure is organized into distinct regions including the optic lobes (processing visual information), antennal lobes (processing olfactory signals), mushroom bodies (associated with learning, memory, and higher-order processing), and the central complex (involved in navigation and spatial orientation). The brain\'s remarkable efficiency allows bees to perform cognitive feats such as the waggle dance communication system, where foragers encode and transmit precise distance and directional information about food sources to nestmates, requiring integration of solar position, landscape features, and distance traveled. Honey bees demonstrate associative learning capabilities, forming memories that link specific floral scents, colors, and patterns with nectar rewards, and can even grasp abstract concepts like "sameness" and "difference" in controlled experiments. The brain coordinates all motor functions from flight mechanics and leg movements to precise sting deployment, while simultaneously processing input from thousands of sensory receptors on the antennae, compound eyes, ocelli, and body surface, making it one of nature\'s most impressive examples of neural miniaturization and computational efficiency in proportion to brain size.</p>'
+    },
+
+      "Ocellus": {
+      title: 'Ocellus', 
+      meta: 'Light intensity sensor', 
+      html: '<p>Each ocellus (plural: ocelli) is a simple eye structure consisting of a single lens and a small retina with photoreceptor cells, arranged in a triangular formation of three units on the top of the bee\'s head between the compound eyes. Unlike the compound eyes that form detailed mosaic images, ocelli function primarily as light intensity detectors and horizon sensors, providing rapid information about changes in ambient illumination and the bee\'s orientation relative to bright light sources like the sun. The ocelli\'s simple optical structure allows for extremely fast response times to changing light conditions, much quicker than the compound eyes, making them essential for flight stabilization and rapid course corrections during aerial maneuvers. These simple eyes contribute significantly to the bee\'s ability to maintain stable flight orientation by detecting the contrast between sky and ground, helping the bee determine which direction is "up" even when visual landmarks are obscured or during rapid flight through complex environments. The neural pathways from ocelli connect directly to flight control centers in the thoracic ganglia, bypassing higher processing centers for immediate reflex responses, and they also play roles in circadian rhythm regulation, helping bees synchronize their internal biological clocks with natural day-night cycles. Research suggests that ocelli may also contribute to the detection of polarized light patterns in the sky, which bees use for navigation, working in conjunction with specialized regions of the compound eyes to create a comprehensive celestial compass system.</p>'
+    },
+
+      "Thoracic air sac": {
+      title: 'Thoracic Air Sac', 
+      meta: 'Respiratory air reservoir', 
+      html: '<p>The thoracic air sacs are thin-walled, expandable chambers located within the thorax that serve as vital components of the bee\'s respiratory system, functioning as bellows-like structures that facilitate efficient air circulation through the extensive network of tracheal tubes. These air sacs lack the rigid rings (taenidia) that characterize tracheal tubes, allowing them to expand and compress with body movements and muscular contractions, creating pressure gradients that drive air movement throughout the respiratory system. The strategic positioning of thoracic air sacs adjacent to the massive flight muscles serves a dual purpose: providing a readily available oxygen reservoir to fuel the intense metabolic demands of flight, which requires extraordinary energy expenditure, and helping to dissipate the substantial heat generated by muscle activity. During flight, the rhythmic compression and expansion of these air sacs, coordinated with wing beats and abdominal pumping movements, creates an active ventilation system that is far more efficient than simple diffusion, enabling bees to achieve the high oxygen delivery rates necessary for sustained flight. The air sacs also contribute to the bee\'s overall buoyancy and may play a role in reducing body density, potentially offering slight aerodynamic advantages. Additionally, these structures help regulate internal pressure during rapid altitude changes and contribute to the production of buzzing sounds, as air moving through the connected tracheal system during wing beats creates the characteristic frequencies we associate with bee flight.</p>'
+    },
+
+      "Dorsal vessel": {
+      title: 'Dorsal Vessel', 
+      meta: 'Hemolymph pumping heart', 
+      html: '<p>The dorsal vessel is the honey bee\'s primary circulatory organ, functioning as an elongated tubular heart that extends along the dorsal (upper) midline of the body from the posterior abdomen to the head, pumping hemolymph (insect blood) throughout the open circulatory system. This muscular tube features several chambers with one-way valves called ostia that allow hemolymph to enter from the body cavity during diastole (relaxation phase) and prevent backflow during systole (contraction phase) when fluid is propelled forward toward the head. The dorsal vessel contracts in rhythmic, wave-like peristaltic movements that originate at the posterior end and travel anteriorly, generating the pressure necessary to circulate hemolymph through the body cavity where it directly bathes organs and tissues, delivering nutrients and removing metabolic wastes. Unlike vertebrate blood, bee hemolymph does not transport oxygen (this function is handled by the separate tracheal system), but instead carries dissolved nutrients, hormones, immune cells (hemocytes), and waste products while maintaining osmotic balance and providing hydraulic pressure for various body functions. The heart rate varies dramatically with the bee\'s activity level, ambient temperature, and physiological state, beating faster during flight and foraging activities and slower during rest, with rates ranging from approximately 60 beats per minute at rest to over 150 beats per minute during active flight. The dorsal vessel is suspended within the body cavity by thin connective tissue strands and works in coordination with accessory pulsatile organs in the antennae, legs, and wings to ensure hemolymph reaches extremities where the main circulatory current is weakest.</p>'
+    },
+
+      "Abdominal air sacs": {
+      title: 'Abdominal Air Sacs', 
+      meta: 'Air circulation chambers', 
+      html: '<p>The abdominal air sacs are large, thin-walled inflatable chambers distributed throughout the abdomen that represent the most voluminous components of the bee\'s respiratory system, serving as critical air reservoirs and ventilation bellows that drive oxygen-rich air through the tracheal network. These expandable structures occupy significant space within the abdominal cavity and can change volume dramatically through coordinated contractions of abdominal muscles and intersegmental membranes, creating powerful pumping actions that actively ventilate the entire respiratory system rather than relying solely on passive diffusion. The abdominal air sacs undergo rhythmic expansion and compression during specialized fanning behavior, where bees position themselves at the hive entrance and use their wings and body movements to create directional airflow that regulates hive temperature and humidity while refreshing the air inside the colony. During flight, the mechanical compression of abdominal segments synchronized with wing beats creates an auxiliary respiratory pump that substantially increases oxygen delivery to metabolically active flight muscles and other tissues, supporting the extreme energy demands of sustained aerial activity. The large volume of the abdominal air sacs also provides a thermal buffer, helping to insulate vital organs from rapid temperature fluctuations and contributing to the bee\'s remarkable ability to thermoregulate both individually and collectively as a colony. These air sacs connect to the main tracheal trunks through large openings, ensuring efficient air exchange, and their strategic positioning allows for compression during stinging behavior, which forces air pressure changes that may assist in venom delivery or defensive displays.</p>'
+    },
+
+      "Trachea": {
+      title: 'Trachea', 
+      meta: 'Oxygen delivery network', 
+      html: '<p>The tracheal system is an elaborate network of branching air tubes that penetrate throughout the entire bee body, delivering oxygen directly to individual cells and tissues without relying on the circulatory system for gas transport, representing a fundamentally different respiratory strategy than vertebrate lungs. These tubes have walls reinforced with spiral thickenings called taenidia, which prevent collapse under pressure while maintaining flexibility, allowing the tracheal system to accommodate body movements during walking, flight, and the telescoping of abdominal segments. The tracheal network begins at paired openings called spiracles located along the sides of the thorax and abdomen, which can open and close to regulate air exchange and prevent water loss, then branches repeatedly into progressively finer tubes called tracheoles that ultimately reach individual cells where oxygen and carbon dioxide exchange occurs. The finest tracheoles have walls thin enough for gases to diffuse directly across them, with some tracheoles actually penetrating into large cells or being filled with fluid that enhances gas exchange through solution and diffusion. The tracheal system\'s direct oxygen delivery mechanism is highly efficient for small organisms like bees, enabling the extraordinary metabolic rates required for flight, but it also represents a size constraint, as this system becomes less effective in larger bodies due to diffusion limitations. The tracheal network is intimately connected with air sacs in both the thorax and abdomen, which act as reservoirs and ventilation pumps, and the entire system is actively ventilated through coordinated body movements that create pressure changes driving bulk airflow rather than depending solely on passive diffusion, particularly during high-oxygen-demand activities like flight or thermoregulation.</p>'
+    },
+
+      "Ventral diaphragm": {
+      title: 'Ventral Diaphragm', 
+      meta: 'Hemolymph circulation aid', 
+      html: '<p>The ventral diaphragm is a thin, muscular membrane that extends horizontally along the ventral (lower) side of the abdominal cavity, creating a separate hemolymph channel beneath it and playing a crucial role in directing circulatory flow patterns within the bee\'s open circulatory system. This fibromuscular septum undergoes rhythmic contractions independent of the dorsal vessel (heart), creating localized pressure changes that help drive hemolymph circulation through the ventral region of the body and assist in returning hemolymph toward the posterior where it can re-enter the dorsal vessel through the ostia. The ventral diaphragm works in coordination with the dorsal vessel to establish a circular flow pattern: hemolymph is pumped forward through the dorsal vessel, disperses into the body cavity to bathe organs and tissues, then flows backward along the ventral diaphragm before being collected again by the heart. This arrangement is particularly important for ensuring adequate hemolymph circulation to the legs, ventral nerve cord, and ventral body wall, regions that might otherwise receive inadequate perfusion in a simple open circulatory system. The diaphragm\'s contractions also contribute to mixing of hemolymph, preventing stratification of nutrients or waste products and ensuring more uniform distribution of hormones, immune cells, and metabolic compounds throughout the hemocoel. The muscle fibers of the ventral diaphragm contain contractile proteins similar to those in the dorsal vessel and are innervated by the ventral nerve cord, allowing for coordination with other physiological processes such as respiration, digestion, and responses to environmental stressors or injury.</p>'
+    },
+
+     "Ventral nerve cord": {
+        title: 'Ventral Nerve Cord',
+        meta: 'Central nervous system pathway',
+        html: '<p>The ventral nerve cord is the primary neural highway of the honey bee, consisting of a double chain of segmental ganglia connected by longitudinal connectives that extends along the ventral midline from the head to the posterior abdomen. This structure serves as the main communication pathway between the brain and peripheral body regions, coordinating motor functions, sensory processing, and reflexive behaviors essential for survival and colony activities. Each ganglion along the cord contains clusters of nerve cell bodies and synaptic connections that process local sensory information and control segmental functions such as leg movement, wing coordination, and abdominal contractions. The thoracic ganglia are particularly enlarged and specialized for controlling the complex flight apparatus, integrating signals from wing sensors, flight muscles, and balance organs to maintain stable aerial locomotion. The ventral nerve cord also coordinates defensive behaviors, including the rapid deployment of the sting apparatus and the release of alarm pheromones that alert nestmates to threats. This neural structure demonstrates remarkable integration capabilities, processing multiple sensory inputs simultaneously while coordinating appropriate motor responses, and it can function semi-independently of the brain for basic reflexive behaviors, ensuring survival even under stress conditions.</p>'
+    },
+
+      "Sting apparatus": {
+        title: 'Sting Apparatus',
+        meta: 'Defensive weapon system',
+        html: '<p>The sting apparatus is a highly sophisticated defensive mechanism consisting of a modified ovipositor with barbed lancets, venom delivery system, and associated musculature that continues to function autonomously even after detaching from the bee body. This complex structure includes paired barbed stylets that penetrate target tissue, a venom sac containing potent cytolytic and hemolytic compounds, and muscular pumps that inject venom through a hollow shaft. The barbed design of worker bee stings causes the entire apparatus to anchor in mammalian skin and tear away from the bee abdomen during withdrawal attempts, ensuring maximum venom delivery while sacrificing the individual for colony defense. The venom itself contains over 40 different compounds including melittin, phospholipase A2, hyaluronidase, and various biogenic amines that cause immediate pain, tissue damage, and inflammatory responses. The sting apparatus also produces alarm pheromones that chemically alert nearby bees to the threat, coordinating collective defensive responses. Queens possess smooth stings that can be used repeatedly without detachment, primarily for eliminating rival queens rather than colony defense. The autonomous pumping action of the detached sting apparatus can continue for several minutes, delivering additional venom and alarm pheromones even after the bee has died.</p>'
+    },
+
+      "Rectum": {
+        title: 'Rectum',
+        meta: 'Waste processing and water conservation',
+        html: '<p>The rectum is the terminal portion of the digestive system where final water reabsorption and waste concentration occur, playing a critical role in maintaining the bee osmotic balance and minimizing water loss, particularly important during winter months when bees cannot leave the hive for extended periods. This specialized chamber features rectal glands with complex folded surfaces that actively transport water and essential ions back into the hemolymph while concentrating nitrogenous wastes and other metabolic byproducts for elimination. The rectum can store waste materials for extended periods, allowing bees to retain fecal matter during cold weather or when confined to the hive, preventing contamination of the nest environment. The rectal glands also play important roles in ion regulation, maintaining proper sodium, potassium, and chloride concentrations in the hemolymph despite varying dietary inputs and environmental conditions. During active foraging seasons, the rectum processes large volumes of liquid waste from nectar consumption, while in winter it must concentrate waste from stored honey and maintain water balance during months of confinement. The muscular walls of the rectum can contract forcefully to expel waste during cleansing flights, and the timing of these elimination behaviors is carefully coordinated with weather conditions and hive needs to maintain colony hygiene.</p>'
+    },
+
+      "Poison gland": {
+        title: 'Poison Gland',
+        meta: 'Venom production facility',
+        html: '<p>The poison gland is a specialized secretory organ that produces and stores the complex venom mixture delivered through the sting apparatus, synthesizing over 40 different bioactive compounds that work synergistically to create potent defensive and offensive capabilities. This gland consists of two main components: the acid gland, which produces the majority of venom proteins including melittin, phospholipase A2, and hyaluronidase, and the alkaline gland, which contributes additional compounds and helps maintain optimal pH for venom stability. The venom production process involves sophisticated cellular machinery including rough endoplasmic reticulum and Golgi apparatus that synthesize, modify, and package the various protein and peptide components. Melittin, the primary active component comprising up to 50% of venom dry weight, disrupts cell membranes and causes hemolysis, while phospholipase A2 breaks down phospholipids in cell membranes and triggers inflammatory cascades. The poison gland can regenerate venom relatively quickly after depletion, with full replenishment typically occurring within 2-3 days under normal conditions. The gland also produces alarm pheromones that are released during stinging events, creating chemical signals that attract additional defenders and coordinate colony-wide defensive responses. Venom composition can vary based on bee age, season, and environmental factors, with older bees generally producing more potent venom mixtures.</p>'
+    },
+
+      "Ovary": {
+        title: 'Ovary',
+        meta: 'Female reproductive organ',
+        html: '<p>The ovaries are paired reproductive organs in female bees that consist of multiple ovarioles (egg tubes) where oocytes develop and mature, with their structure and function varying dramatically between queens and workers due to caste-specific developmental programs and hormonal regulation. In queen bees, the ovaries are highly developed with numerous large ovarioles that can produce up to 2,000 eggs per day during peak laying season, supported by extensive nutritional resources and specialized attendant care. Each ovariole contains a germarium where stem cells divide and differentiate, followed by a vitellarium where developing oocytes accumulate yolk proteins and other nutrients necessary for embryonic development. Worker bee ovaries remain largely undeveloped under normal colony conditions due to queen pheromone suppression, but can become activated in queenless colonies, allowing workers to lay unfertilized eggs that develop into drones. The ovarian development is controlled by complex interactions between juvenile hormone, ecdysone, and various neuropeptides that respond to nutritional status, pheromonal cues, and environmental conditions. Ovarian function is closely coordinated with other reproductive structures including the spermatheca in queens, and the timing of egg production is synchronized with colony needs, seasonal cycles, and resource availability. The ovaries also produce various hormones and signaling molecules that influence behavior, metabolism, and other physiological processes throughout the bee body.</p>'
+    },
+
+      "Spermatheca": {
+        title: 'Spermatheca',
+        meta: 'Sperm storage organ',
+        html: '<p>The spermatheca is a specialized storage organ found in queen bees that maintains viable sperm throughout the queen entire reproductive lifespan, which can extend for several years, representing one of the most remarkable examples of long-term gamete preservation in the animal kingdom. This spherical structure with muscular walls and glandular secretions creates an optimal microenvironment for sperm survival, maintaining proper pH, osmotic balance, and nutritional conditions while protecting stored sperm from oxidative damage and other degradative processes. Queens typically mate with 10-20 drones during their nuptial flights, collecting and storing millions of sperm cells in the spermatheca, which are then selectively released to fertilize eggs throughout the queen reproductive career. The spermatheca features a complex valve system that allows precise control over sperm release, enabling queens to choose whether to fertilize eggs (producing female workers or future queens) or lay unfertilized eggs (producing male drones) based on colony needs and seasonal requirements. The glandular walls of the spermatheca secrete protective proteins, antioxidants, and antimicrobial compounds that preserve sperm viability and prevent bacterial contamination. Research has shown that sperm stored in the spermatheca can remain viable for up to 7 years, though fertility typically declines with age, and the health of this organ directly impacts colony productivity and genetic diversity of offspring.</p>'
+    },
+
+      "Vagina": {
+        title: 'Vagina',
+        meta: 'Reproductive tract terminus',
+        html: '<p>The vagina is the terminal portion of the female reproductive tract that serves as both the copulatory organ during mating and the birth canal through which eggs are laid, featuring specialized structures and sensory systems that coordinate reproductive behaviors and egg-laying activities. This muscular tube connects the internal reproductive organs with the external environment and contains complex valve mechanisms that control sperm transfer during mating and regulate egg passage during oviposition. The vaginal walls are equipped with sensory receptors that detect mechanical stimuli during copulation and egg-laying, providing feedback that coordinates muscular contractions and ensures proper reproductive function. During mating flights, the vagina receives sperm from multiple drone partners, and specialized structures help direct sperm toward the spermatheca for long-term storage while filtering out damaged or non-viable gametes. The vagina also plays a role in egg orientation and positioning during the laying process, ensuring that eggs are properly placed in comb cells with correct orientation for optimal development. Glandular secretions within the vagina provide lubrication and antimicrobial protection, helping to prevent infections that could compromise reproductive success. The muscular contractions of the vagina are coordinated with other reproductive organs and are influenced by hormonal signals, pheromonal cues, and neural inputs that synchronize reproductive activities with colony needs and environmental conditions.</p>'
+    },
+
+      "Malpighian tubules": {
+        title: 'Malpighian Tubules',
+        meta: 'Excretory and osmoregulatory organs',
+        html: '<p>The Malpighian tubules are slender, blind-ended excretory organs that extend into the hemocoel from the junction between the midgut and hindgut, functioning as the primary filtration system for removing metabolic wastes and maintaining osmotic balance in the bee body. These tubular structures actively transport nitrogenous wastes, particularly uric acid, from the hemolymph into their lumens, where these compounds are concentrated and eventually passed to the hindgut for elimination. The tubules also play crucial roles in ion regulation, selectively reabsorbing or secreting sodium, potassium, chloride, and other electrolytes to maintain proper hemolymph composition despite varying dietary inputs and environmental conditions. Each tubule consists of specialized epithelial cells with extensive microvilli that increase surface area for transport processes, and these cells contain numerous mitochondria to power the energy-intensive active transport mechanisms. The Malpighian tubules work in coordination with the rectum to achieve remarkable water conservation, particularly important for bees living in arid environments or during winter confinement when water sources are limited. These organs also contribute to detoxification processes, helping to eliminate plant secondary compounds and other potentially harmful substances that bees encounter during foraging. The number and size of Malpighian tubules can vary with bee age, caste, and physiological state, reflecting their adaptive importance in maintaining homeostasis under diverse conditions.</p>'
+    },
+
+      "Ileum": {
+        title: 'Ileum',
+        meta: 'Final nutrient absorption site',
+        html: '<p>The ileum is the posterior portion of the midgut where final nutrient absorption and processing occur before food materials pass into the hindgut for waste concentration and elimination. This specialized region features highly folded epithelial surfaces with extensive microvilli that maximize the surface area available for nutrient uptake, ensuring efficient extraction of remaining proteins, carbohydrates, lipids, vitamins, and minerals from digested food. The ileal epithelium contains specialized transport proteins and enzyme systems that facilitate the absorption of specific nutrients, including amino acid transporters, sugar carriers, and lipid absorption mechanisms that work to salvage every available nutrient from the food stream. This region also plays important roles in water balance, reabsorbing significant amounts of water from the digestive contents to prevent dehydration and maintain proper hemolymph volume and concentration. The ileum contains populations of beneficial microorganisms that contribute to digestion, particularly of complex carbohydrates and plant materials, and these microbial communities can vary with diet, season, and bee age. The muscular walls of the ileum generate peristaltic contractions that move processed food materials toward the hindgut while allowing sufficient time for complete nutrient extraction. The ileum also serves as a barrier between the nutrient-rich midgut environment and the waste-processing hindgut, preventing backflow and contamination while maintaining the distinct chemical environments required for optimal function of each digestive region.</p>'
+    },
+
+      "Honey stomach": {
+        title: 'Honey Stomach (Crop)',
+        meta: 'Nectar storage and transport organ',
+        html: '<p>The honey stomach, also known as the crop, is a specialized expandable storage organ that allows forager bees to collect and transport large quantities of nectar without mixing it with their own digestive processes, serving as a temporary reservoir that can hold up to 70 milligrams of nectar—nearly equal to the bee own body weight. This remarkable structure features muscular walls that can expand dramatically to accommodate varying nectar loads while maintaining the ability to contract for regurgitation during food sharing or honey storage activities. The crop is separated from the true digestive tract by the proventriculus, a valve-like structure that prevents nectar from entering the midgut until the bee chooses to consume it for personal nutrition. Within the honey stomach, nectar begins its transformation into honey through the action of enzymes, particularly invertase and glucose oxidase, which are added from salivary and hypopharyngeal gland secretions, beginning the process of converting complex sugars into simpler forms and adding antimicrobial compounds. The crop enables efficient foraging by allowing bees to make fewer trips between flowers and the hive while carrying maximum nectar loads, and its contents can be rapidly transferred to house bees through trophallaxis (food sharing) upon return to the colony. The honey stomach also plays roles in thermoregulation, as the large volume of liquid can serve as thermal mass, and in emergency situations, bees can consume crop contents for energy during extended flights or adverse weather conditions.</p>'
+    },
+
+      "Proventriculus": {
+        title: 'Proventriculus',
+        meta: 'Crop-midgut valve system',
+        html: '<p>The proventriculus is a specialized valve structure located at the junction between the honey stomach (crop) and the midgut that serves as a critical control mechanism, allowing bees to selectively regulate the flow of food materials between these two functionally distinct regions of the digestive system. This muscular valve can open to allow crop contents to enter the midgut for personal digestion or remain closed to keep collected nectar separate from the bee own nutritional needs, enabling the remarkable ability to transport food for the colony without consuming it. The proventriculus features complex muscular arrangements and sensory receptors that respond to chemical and mechanical stimuli, allowing bees to assess food quality and make decisions about whether materials should be processed for personal nutrition or reserved for colony use. This structure also contains filtering mechanisms that can separate solid particles like pollen grains from liquid nectar, directing different food components to appropriate processing pathways within the digestive system. The valve function is coordinated with other digestive processes and can be influenced by the bee nutritional state, colony needs, and hormonal signals that reflect foraging priorities and social roles. During trophallaxis (food sharing), the proventriculus works in reverse, allowing controlled regurgitation of crop contents for transfer to nestmates, and its precise operation is essential for the complex food distribution networks that characterize eusocial bee colonies. The proventriculus also plays protective roles, preventing backflow of digestive enzymes and maintaining the distinct chemical environments required for optimal crop and midgut function.</p>'
+    },
+
+      "Ventriculus": {
+        title: 'Ventriculus (Midgut)',
+        meta: 'Primary digestion chamber',
+        html: '<p>The ventriculus, or midgut, is the primary digestive chamber where enzymatic breakdown of food occurs, featuring a complex array of digestive enzymes, protective mechanisms, and absorption systems that efficiently process the diverse range of materials that bees consume. This region is lined with a peritrophic membrane, a semi-permeable chitinous structure that protects the delicate midgut epithelium from abrasive food particles while allowing enzymes and nutrients to pass through freely. The midgut epithelium consists of specialized cells that secrete various digestive enzymes including proteases for protein breakdown, carbohydrases for sugar processing, and lipases for fat digestion, creating an optimal chemical environment for food breakdown. The ventriculus also contains populations of beneficial microorganisms that contribute to digestion, particularly of complex plant materials and pollen, and these microbial communities play important roles in nutrition, immunity, and overall bee health. The midgut undergoes regular renewal through stem cell activity, replacing damaged epithelial cells and maintaining optimal digestive function throughout the bee lifespan. This region also serves as a site for detoxification, where specialized enzyme systems break down plant secondary compounds and other potentially harmful substances that bees encounter during foraging. The muscular walls of the ventriculus generate mixing and propulsive movements that ensure thorough food processing and move digested materials toward the ileum for final nutrient absorption.</p>'
+    },
+
+      "Labium": {
+        title: 'Labium',
+        meta: 'Lower lip and proboscis base',
+        html: '<p>The labium forms the lower lip and serves as the foundation for the proboscis apparatus, consisting of multiple articulated segments that work together to create the sophisticated feeding mechanism that allows bees to access nectar from flowers with remarkable efficiency and precision. The central component of the labium is the glossa (tongue), an elongated, hairy structure that can extend well beyond the other mouthparts to reach deep into flower corollas, using both capillary action and active lapping movements to collect nectar. The labial palps, paired sensory appendages flanking the glossa, contain numerous chemoreceptors and mechanoreceptors that allow bees to taste potential food sources and assess nectar quality, concentration, and suitability before committing to extended feeding. The paraglossae, lateral lobes of the labium, help form the sides of the food canal when the proboscis is extended, working with the maxillae to create a sealed tube through which nectar can be efficiently transported. The labium base contains complex muscular systems that control proboscis extension and retraction, allowing bees to rapidly deploy their feeding apparatus when approaching flowers and fold it compactly against the head when not in use. The entire labial complex demonstrates remarkable morphological flexibility, adapting to flowers of different shapes and sizes while maintaining efficient nectar extraction capabilities. The labium also plays roles in lapping, sucking, tasting, and manipulating liquids during feeding and honey-making.</p>'
+    },
+
+      "Thoracic ganglion": {
+        title: 'Thoracic Ganglion',
+        meta: 'Flight and locomotion control center',
+        html: '<p>The thoracic ganglion is a fused neural center that represents one of the most sophisticated motor control systems in the insect world, coordinating the incredibly complex flight mechanics and leg movements that enable honey bees to perform their remarkable aerial capabilities and precise terrestrial locomotion. This enlarged ganglion contains thousands of motor neurons, interneurons, and sensory processing units that integrate information from wing sensors, proprioceptors, visual systems, and balance organs to maintain stable flight and execute complex maneuvers with extraordinary precision. The ganglion controls the indirect flight muscles that power wing beats at frequencies exceeding 200 beats per second, coordinating the precise timing and force generation required for lift, thrust, and directional control during flight. It also manages the intricate coordination between the two pairs of wings, ensuring they work together as a single aerodynamic unit through the coupling and uncoupling of wing hooks (hamuli) as needed for different flight modes. The thoracic ganglion processes sensory feedback from mechanoreceptors in the wing bases and leg joints, allowing for real-time adjustments to flight posture and walking gait patterns in response to changing conditions. This neural center also coordinates complex behaviors such as the waggle dance, where precise body movements and wing vibrations encode spatial information about food sources for communication with nestmates. The ganglion contains specialized circuits for different types of locomotion, from hovering and rapid directional changes during foraging to the precise movements required for comb construction and other hive activities.</p>'
+    },
+
+      "Crop": {
+        title: 'Crop (Honey Stomach)',
+        meta: 'Social food storage system',
+        html: '<p>The crop, commonly referred to as the honey stomach, represents one of the most remarkable adaptations for eusocial life, functioning as a living storage vessel that enables individual bees to serve as mobile food reservoirs for the entire colony. This expandable organ can stretch to accommodate nectar loads that approach or exceed the bee body weight, transforming individual foragers into efficient cargo carriers that maximize the energy return on foraging investments. The crop walls contain specialized muscle fibers arranged in both circular and longitudinal orientations, allowing for controlled expansion during filling and precise contraction during regurgitation, enabling bees to transfer exact quantities of food to recipients during trophallaxis. Within the crop, collected nectar undergoes initial processing through the addition of enzymes from various glandular sources, beginning the complex biochemical transformations that convert raw nectar into mature honey with its characteristic composition and antimicrobial properties. The crop contents remain separate from the bee personal digestive system through the action of the proventriculus valve, allowing foragers to transport food for colony use without depleting their own energy reserves. This organ also serves emergency functions, as bees can access crop contents for personal nutrition during extended flights, adverse weather conditions, or when separated from the colony. The crop capacity and efficiency directly impact colony foraging success, and its proper function is essential for the complex food distribution networks that characterize advanced eusocial societies.</p>'
+    },
+
+    
+      };
+
+    function showAnatomyDetail(part){
+      const panel=document.getElementById('anatomy-detail');
+      const desc = anatomyDescriptions[part];
+      document.getElementById('anatomy-title').innerText=part;
+      document.getElementById('anatomy-body').innerHTML=desc ? desc.html : "Description not available.";
+      panel.classList.add('visible');
+      panel.setAttribute('aria-hidden','false');
+    }   
+
+    function hideAnatomyDetail(){
+      const panel=document.getElementById('anatomy-detail');
+      panel.classList.remove('visible');
+      panel.setAttribute('aria-hidden','true');
+    }
+
+    function checkAnswer(btn,isCorrect){
+      const out=document.getElementById('quiz-result');
+      out.textContent=isCorrect?'✅ Correct!':'❌ Try again!';
+      out.style.color=isCorrect?'green':'red';
+    }
+
+    // Close tooltips on outside click
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('area') && !e.target.closest('#detail') && !e.target.closest('#morphImg')){
+        document.getElementById('tooltip').style.display='none';
+      }
+    }, true);
+
+    // Close detail on Escape
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ hideDetail(); hideAnatomyDetail(); } });
+  </script>
+</body>
+</html>
